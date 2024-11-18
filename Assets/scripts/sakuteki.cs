@@ -15,8 +15,8 @@ public class sakuteki : MonoBehaviour
     {
         if (col.gameObject.name == "PlayerCapsule")
         {
-            transform.LookAt(player);
-            transform.Translate(0, 0, 0.1f);
+           /// transform.LookAt(player);
+            //transform.Translate(0, 0, 0.1f);
         }
 
     }
