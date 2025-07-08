@@ -12,9 +12,39 @@ public class RandomEffectManager : MonoBehaviour
     public FlipTarget flipTarget;
     public PlayerHealth playerHealth;
 
-
+    private int effectIndex = 0;
 
     public void TriggerRandomEffect()
+    {
+        //GameManager.Instance.SetPhase(GamePhase.Scare);
+        Debug.Log("TriggerRandomEffect 実行: effectIndex = " + effectIndex);
+        switch (effectIndex)
+        {
+            case 0:
+                dropObjectController.DropObject();
+                StartCoroutine(DelayedDamage(1.0f));
+                break;
+            case 1:
+                soundPlayer.PlayRandomClip();
+                StartCoroutine(DelayedDamage(1.0f));
+                break;
+            case 2:
+                scatterShot.Fire();
+                StartCoroutine(DelayedDamage(1.0f));
+                break;
+            case 3:
+                pawnInFront.SpawnObject();
+                break;
+            /*case 4:
+                flipTarget.Turn();
+                break;*/
+        }
+
+        effectIndex = (effectIndex + 1) % 4; // 次のインデックスに
+    }
+
+
+    /*public void TriggerRandomEffect()
     {
         //GameManager.Instance.SetPhase(GamePhase.Scare);
 
@@ -42,7 +72,7 @@ public class RandomEffectManager : MonoBehaviour
         {
             flipTarget.Turn();
         }
-    }
+    }*/
 
     private IEnumerator DelayedDamage(float delay)
     {

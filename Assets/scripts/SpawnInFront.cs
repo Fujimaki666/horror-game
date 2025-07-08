@@ -11,6 +11,7 @@ public class SpawnInFront : MonoBehaviour
     private NavMeshAgent agent;
     public AudioClip lion; // •¡”‚Ì‰¹ºƒNƒŠƒbƒv
     private AudioSource audioSource;
+    public Charahealth charaHealth;
     void Start()
     {
         agent = target.GetComponent<NavMeshAgent>();
@@ -39,6 +40,7 @@ public class SpawnInFront : MonoBehaviour
         ChaseTarget chase = target.GetComponent<ChaseTarget>();
         if (chase != null)
         {
+            
             StartCoroutine(chase.PauseForDuration(2f));
         }
         Destroy(spawned, 2f);
