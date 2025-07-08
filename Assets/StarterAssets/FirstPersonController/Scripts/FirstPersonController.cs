@@ -51,8 +51,19 @@ namespace StarterAssets
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
 
-		// cinemachine
-		private float _cinemachineTargetPitch;
+		//しゃがみ用の設定
+        [Header("Crouch Settings")]
+        [Tooltip("Speed when crouching")]
+        public float CrouchSpeed = 2.0f;
+        [Tooltip("Character height when crouching")]
+        public float CrouchHeight = 1.0f;
+        [Tooltip("Character height when standing")]
+        public float StandingHeight = 2.0f;
+
+        private bool _isCrouching = false;
+
+        // cinemachine
+        private float _cinemachineTargetPitch;
 
 		// player
 		private float _speed;
@@ -115,14 +126,32 @@ namespace StarterAssets
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
-		}
+            HandleCrouch();
+        }
 
 		private void LateUpdate()
 		{
 			CameraRotation();
 		}
+        private void HandleCrouch()
+        {
+            // 左Ctrlでしゃがみ切り替え
+            if (Keyboard.current != null && Keyboard.current.leftCtrlKey.wasPressedThisFrame)
+            {
+                _isCrouching = !_isCrouching;
 
-		private void GroundedCheck()
+                // CharacterController の高さ変更
+                _controller.height = _isCrouching ? CrouchHeight : StandingHeight;
+
+                // カメラの高さも一緒に下げる場合（Cinemachine Target を操作）
+                Vector3 camPos = CinemachineCameraTarget.transform.localPosition;
+                camPos.y = _isCrouching ? 0.5f : 1.0f; // 好みに応じて調整
+                CinemachineCameraTarget.transform.localPosition = camPos;
+            }
+        }
+
+
+        private void GroundedCheck()
 		{
 			// set sphere position, with offset
 			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
@@ -155,12 +184,20 @@ namespace StarterAssets
 		{
 			// set target speed based on move speed, sprint speed and if sprint is pressed
 			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+            
 
-			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
+            // しゃがみ中なら CrouchSpeed に変更
+            if (_isCrouching)
+            {
+                targetSpeed = CrouchSpeed;
+            }
 
-			// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-			// if there is no input, set the target speed to 0
-			if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+
+            // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
+
+            // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+            // if there is no input, set the target speed to 0
+            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
 
 			// a reference to the players current horizontal velocity
 			float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
@@ -196,6 +233,7 @@ namespace StarterAssets
 
 			// move the player
 			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
 		}
 
 		private void JumpAndGravity()
