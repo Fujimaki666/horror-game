@@ -138,8 +138,9 @@ public class ChaseTarget : MonoBehaviour
         isChasing = true;
         if (isChasing)
         {
-            hpslider.SetActive(false);
-            playerslider.SetActive(true);
+            //hpslider.SetActive(false);
+            
+            //playerslider.SetActive(true);
         }
         // 巡回システムを停止
         StopPatrolSystem();
@@ -162,8 +163,8 @@ public class ChaseTarget : MonoBehaviour
 
         currentTarget = null;
         isChasing = false;
-        hpslider.SetActive(true);
-        playerslider.SetActive(false);
+        //hpslider.SetActive(true);
+        //playerslider.SetActive(false);
         // 巡回システムを再開
         ResumePatrolSystem();
     }
@@ -188,8 +189,8 @@ public class ChaseTarget : MonoBehaviour
     /// </summary>
     private void ResumePatrolSystem()
     {
-         hpslider.SetActive(true);
-            playerslider.SetActive(false);
+         //hpslider.SetActive(true);
+            //playerslider.SetActive(false);
         
         if (navigationSystem != null)
         {
@@ -333,6 +334,7 @@ public class ChaseTarget : MonoBehaviour
         }
 
         isPaused = false;
+        GameManager.Instance?.SetPhase(GamePhase.Patrol);
     }
 
     #endregion

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class ScareTriggerUI : MonoBehaviour
 {
     [Header("UI Settings")]
-    public GameObject text; // 表示するボタン（Canvas上に設置）
+    public GameObject text; // 表示するボタン
     public RandomEffectManager effectManager;
 
     [Header("Enemy Detection")]
@@ -13,6 +13,8 @@ public class ScareTriggerUI : MonoBehaviour
 
     private bool canTrigger = false;
     private bool isUIVisible = false;
+    private bool scareQueued = false;
+    private bool scareInProgress = false;
 
     void Start()
     {
@@ -31,21 +33,49 @@ public class ScareTriggerUI : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log("右クリック検知");
+        }
+        Debug.Log($"Phase: {GameManager.Instance.currentPhase}");
+        if (GameManager.Instance.currentPhase == GamePhase.Chase)
+        {
+            Debug.Log("フェーズがChaseのため処理中断");
+            return;
+        }
+
         // 敵が追跡中かチェック
         bool enemyIsChasing = IsEnemyChasing();
+        Debug.Log($"Update - canTrigger:{canTrigger}, RightClick:{Input.GetMouseButtonDown(1)}");
 
         // 敵が追跡中の場合、UIを強制的に隠す
         if (enemyIsChasing && isUIVisible)
         {
+            Debug.Log("敵が追跡中なのでUIを非表示にして中断");
             ForceHideUI();
+            return;
+        }
+        // 発動予約があれば実行
+        if (scareQueued)
+        {
+            Debug.Log("スケア予約発動");
+            scareQueued = false;
+            GameManager.Instance?.SetPhase(GamePhase.Scare);
+            effectManager.TriggerRandomEffect();
+            HideScareUI();
             return;
         }
 
         // 敵が追跡中でない場合のみ、通常の処理を実行
         if (!enemyIsChasing && canTrigger && Input.GetMouseButtonDown(1))
         {
-            effectManager.TriggerRandomEffect();
-            HideScareUI();
+            //GameManager.Instance?.SetPhase(GamePhase.Scare);
+            Debug.Log("スケア発動！");
+            
+            //effectManager.TriggerRandomEffect();
+            
+            //HideScareUI();
+            scareQueued = true;
         }
     }
 
@@ -73,7 +103,7 @@ public class ScareTriggerUI : MonoBehaviour
         canTrigger = true;
         isUIVisible = true;
         text.SetActive(true);
-        Debug.Log("スケアUI表示！");
+        //Debug.Log("スケアUI表示！");
     }
 
     /// <summary>

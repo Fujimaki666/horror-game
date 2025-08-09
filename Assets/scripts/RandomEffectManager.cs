@@ -25,19 +25,21 @@ public class RandomEffectManager : MonoBehaviour
                 StartCoroutine(DelayedDamage(1.0f));
                 break;
             case 1:
+                pawnInFront.SpawnObject();
+                break;
+                
+            case 2:
                 soundPlayer.PlayRandomClip();
                 StartCoroutine(DelayedDamage(1.0f));
                 break;
-            case 2:
+
+            case 3:
                 scatterShot.Fire();
                 StartCoroutine(DelayedDamage(1.0f));
                 break;
-            case 3:
-                pawnInFront.SpawnObject();
-                break;
-            /*case 4:
-                flipTarget.Turn();
-                break;*/
+                /*case 4:
+                    flipTarget.Turn();
+                    break;*/
         }
 
         effectIndex = (effectIndex + 1) % 4; // 次のインデックスに

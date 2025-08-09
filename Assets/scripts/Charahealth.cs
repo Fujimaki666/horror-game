@@ -21,6 +21,7 @@ public class Charahealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        GameManager.Instance?.OnEnemyDamaged(currentHp);
         // HP‚ğŒ¸‚ç‚·ˆ—
         currentHp -= damage;
         if (currentHp < 0) currentHp = 0;

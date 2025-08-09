@@ -23,6 +23,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        GameManager.Instance?.OnPlayerDamaged(currentHp);
         audioSource.PlayOneShot(damage1);
 
         currentHp -= damage;
@@ -36,6 +37,7 @@ public class PlayerHealth : MonoBehaviour
             Debug.Log("ゲームオーバー！");
             // ここにゲームオーバー演出やリトライ処理などを追加
         }
+
     }
 
     IEnumerator DamageFlash()

@@ -22,12 +22,18 @@ public class FunSearch : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+
             // 敵がリアクション中ならスキップ
             if (chaser != null && chaser.isReacting)
             {
                 return;
             }
 
+            // スケアーフェーズ中は追跡フェーズに移行しない
+            if (GameManager.Instance != null && GameManager.Instance.currentPhase == GamePhase.Scare)
+            {
+                return;
+            }
             Vector3 posDelta = other.transform.position - transform.position;
             float target_angle = Vector3.Angle(transform.forward, posDelta);
             if (target_angle < angle)
@@ -37,6 +43,7 @@ public class FunSearch : MonoBehaviour
                     
                     if (hit.collider == other)
                     {
+                        GameManager.Instance?.SetPhase(GamePhase.Chase);
                         //hpslider.SetActive(false);
                         //playerslider.SetActive(true);
                         Debug.Log("視界内、追跡開始");
@@ -52,6 +59,7 @@ public class FunSearch : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            GameManager.Instance?.SetPhase(GamePhase.Patrol);
             Debug.Log("視界外、追跡終了");
             //hpslider.SetActive(true);
             //playerslider.SetActive(false);
